@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "maxVideoAgeDays": 30,
+  "catalogLimit": 200,
+  "sources": [
+    {
+      "channelId": "UCV03SRZXJEz-hchIAogeJOg",
+      "category": "technology",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCXZCJLdBC09xxGZ6gcdrc6A",
+      "category": "technology",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCa__kMdkhFJvXcx1WALJ3hg",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCMdMKb-6n35flPoeZQazFFA",
+      "category": "humor",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCMyOj6fhvKFMjxUCp3b_3gA",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCWOA1ZGywLbqmigxE4Qlvuw",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCrFfcsFcqaK-wsZoDy3gGkw",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCnmGIkw-KdI0W5siakKPKog",
+      "category": "humor",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCXPzNYnckscfk3Q8_4sMYkQ",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UC6VcWc1rAoWdBCM0JxrRQ3A",
+      "category": "gaming",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCRijo3ddMTht_IHyNSNXpNQ",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    },
+    {
+      "channelId": "UCblfuW_4rakIf2h6aqANefA",
+      "category": "other",
+      "weight": 1,
+      "enabled": true,
+      "maxVideos": 10
+    }
+  ]
+}

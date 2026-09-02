@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "channels": [
+    {"handle":"@claude","category":"technology","weight":1,"enabled":true},
+    {"handle":"@OpenAI","category":"technology","weight":1,"enabled":true},
+    {"handle":"@martinsolhaugen","category":"other","weight":1,"enabled":true},
+    {"handle":"@jordanandsoph","category":"humor","weight":1,"enabled":true},
+    {"handle":"@NickDiGiovanni","category":"other","weight":1,"enabled":true},
+    {"handle":"@Netflix","category":"other","weight":1,"enabled":true},
+    {"handle":"@historywdave","category":"other","weight":1,"enabled":true},
+    {"handle":"@ryan","category":"humor","weight":1,"enabled":true},
+    {"handle":"@list25","category":"other","weight":1,"enabled":true},
+    {"handle":"@Mindovashorts","category":"other","weight":1,"enabled":true},
+    {"handle":"@alexanderjamestravel","category":"other","weight":1,"enabled":true},
+    {"handle":"@ASAPROCKYUPTOWN","category":"music_art","weight":1,"enabled":true},
+    {"handle":"@RockstarGames","category":"gaming","weight":1,"enabled":true},
+    {"handle":"@dudeperfect","category":"other","weight":1,"enabled":true},
+    {"handle":"@redbull","category":"other","weight":1,"enabled":true}
+  ]
+}
