@@ -19,15 +19,16 @@ handling, ranking, broken-video history and local feedback persistence. Playback
 uses the official YouTube IFrame Player API; the app does not download videos,
 extract media URLs, scrape YouTube or provide YouTube recommendations.
 
-The public catalog is currently 66 videos from 12 reviewed channels. Runtime can
-use the HTTPS catalog at:
+The public catalog is refreshed by the daily maintainer build and its size may
+change over time. The current published snapshot is generated from 12 reviewed
+channels. Runtime can use the HTTPS catalog at:
 
 `https://dzndorosh.github.io/doomscrolling/catalog/youtube-catalog.json`
 
 The app uses this Pages URL by default and refreshes it in the background.
 `FOCUSREELS_REMOTE_CATALOG_URL` is an optional override for development and forks;
-if the network is unavailable, the provider uses its cache and bundled 66-video
-fallback catalog.
+if the network is unavailable, the provider uses its cache and bundled catalog
+snapshot for offline fallback.
 
 The ordinary user needs no API key, OAuth or account. `YOUTUBE_API_KEY` is used
 only by maintainer-side GitHub Actions/local collector commands and never ships
