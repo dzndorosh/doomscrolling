@@ -1,5 +1,6 @@
 // tsc only emits .ts; the renderer and the tray icon just get copied.
 import { cpSync, existsSync, mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -18,6 +19,18 @@ if (existsSync(assetsFrom)) {
 }
 
 console.log('copied renderer assets ->', to);
+
+if (process.platform === 'darwin') {
+  const nativeTo = join(root, 'dist', 'native');
+  mkdirSync(nativeTo, { recursive: true });
+  for (const [arch, target] of [['arm64', 'arm64-apple-macosx13.0'], ['x64', 'x86_64-apple-macosx13.0']]) {
+    try {
+      execFileSync('swiftc', ['scripts/audio-activity.swift', '-target', target, '-framework', 'CoreAudio', '-o', join(nativeTo, `focusreels-audio-activity-${arch}`)], { cwd: root, stdio: 'pipe' });
+    } catch (error) {
+      console.warn(`[focusreels] audio helper unavailable for ${arch}:`, error?.message ?? error);
+    }
+  }
+}
 
 const configFrom = join(root, 'config', 'youtube-catalog.fixture.json');
 if (existsSync(configFrom)) { mkdirSync(join(root, 'dist', 'config'), { recursive: true }); cpSync(configFrom, join(root, 'dist', 'config', 'youtube-catalog.fixture.json')); }

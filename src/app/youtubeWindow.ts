@@ -73,6 +73,7 @@ export class YoutubeWindow {
   private win: BrowserWindow | null = null;
   private ready = false;
   private pending: PlayerStatus | null = null;
+  private externalAudioMuted = false;
 
   private mode: WindowMode = 'expanded';
   private anchor: WindowAnchor = DEFAULT_ANCHOR;
@@ -811,12 +812,20 @@ export class YoutubeWindow {
     win.setAlwaysOnTop(this.settings.alwaysOnTop, 'screen-saver', 1);
   }
 
+  setExternalAudioMuted(muted: boolean): void {
+    this.externalAudioMuted = muted;
+    if (this.win && !this.win.isDestroyed()) {
+      this.push('settings', { muted: this.settings.muted || muted, scrollToChange: this.settings.scrollToChange });
+    }
+  }
+
   updateStatus(status: PlayerStatus): void {
     this.push('status', status);
   }
 
   hide(): void {
     this.push('hide', null);
+    this.externalAudioMuted = false;
     if (this.win && !this.win.isDestroyed() && this.win.isVisible()) this.win.hide();
   }
 
@@ -836,7 +845,7 @@ export class YoutubeWindow {
       win.setAlwaysOnTop(settings.alwaysOnTop, 'screen-saver', 1);
     }
     this.push('settings', {
-      muted: settings.muted,
+      muted: settings.muted || this.externalAudioMuted,
       scrollToChange: settings.scrollToChange,
     });
   }

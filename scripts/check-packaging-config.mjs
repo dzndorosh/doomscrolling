@@ -8,6 +8,7 @@ const checks = [
   ['packager has an app id', typeof build.appId === 'string' && build.appId.length > 0],
   ['packager has a product name', build.productName === 'FocusReels'],
   ['packager enables asar', build.asar === true],
+  ['native helpers are unpacked', Array.isArray(build.asarUnpack) && build.asarUnpack.some((entry) => String(entry).includes('dist/native'))],
   ['packager writes artifacts outside dist', build.directories?.output === 'release'],
   ['packager includes dist runtime', build.files?.includes('dist/**/*') === true],
   ['packager excludes nested mac artifacts', build.files?.includes('!dist/mac-*') === true],

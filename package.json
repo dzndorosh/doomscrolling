@@ -48,6 +48,7 @@
     "appId": "app.focusreels.desktop",
     "productName": "FocusReels",
     "asar": true,
+    "asarUnpack": ["dist/native/**/*"],
     "directories": { "output": "release" },
     "files": ["dist/**/*", "!dist/mac-*", "!dist/*.dmg", "!dist/*.blockmap", "package.json", "public/**/*", "config/**/*"],
     "mac": {

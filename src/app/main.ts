@@ -22,6 +22,7 @@ import { SettingsStore } from './settings.js';
 import { TrayController } from './tray.js';
 import { CatalogProvider } from '../youtube/catalogProvider.js';
 import { ControlCenterWindow } from './controlCenter.js';
+import { externalAudioIsActive } from './audioGuard.js';
 import { remoteCatalogUrl } from '../youtube/catalogConfig.js';
 
 // Development/E2E runs must never touch the user's normal Application Support.
@@ -95,7 +96,10 @@ const registry = new TurnRegistry({
     console.log(`[focusreels] overlay ${visible ? 'show' : 'hide'}`);
     if (visible) {
       const status = currentStatus();
-      if (status) activePlayer().show(status);
+      if (status) {
+        youtube.setExternalAudioMuted(settings.get().muted === false && externalAudioIsActive());
+        activePlayer().show(status);
+      }
     } else {
       if (e2eHoldOpen) return;
       activePlayer().hide();
