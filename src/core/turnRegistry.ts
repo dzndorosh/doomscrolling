@@ -19,12 +19,15 @@ import {
 } from './turnStateMachine.js';
 
 export interface RegistryConfig extends MachineConfig {
+  /** master switch: disabled FocusReels never opens a turn */
+  enabled?: boolean;
   /** an IDE the user switched off never opens a turn at all */
   enabledSources: Record<SourceId, boolean>;
 }
 
 export const DEFAULT_REGISTRY_CONFIG: RegistryConfig = {
   ...DEFAULT_MACHINE_CONFIG,
+  enabled: true,
   enabledSources: {
     cursor: true,
     'vscode-copilot': true,
@@ -125,6 +128,7 @@ export class TurnRegistry {
       if (event.event !== 'turn_started') return;
 
       const cfg = this.getConfig();
+      if (cfg.enabled === false) return;
       if (!cfg.enabledSources[event.source]) return;
 
       entry = {

@@ -62,7 +62,7 @@ export class OverlayWindow {
 
     // Above normal windows and above fullscreen apps, without being a window
     // the user can tab to.
-    win.setAlwaysOnTop(true, 'screen-saver', 1);
+    win.setAlwaysOnTop(this.settings.alwaysOnTop, 'screen-saver', 1);
     win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
     win.setIgnoreMouseEvents(this.settings.clickThrough, { forward: true });
     win.setOpacity(this.settings.opacity);
@@ -158,7 +158,7 @@ export class OverlayWindow {
     // showInactive, never show(): show() would activate the app and pull focus
     // away from the editor the user is still typing in.
     if (!win.isVisible()) win.showInactive();
-    win.setAlwaysOnTop(true, 'screen-saver', 1);
+    win.setAlwaysOnTop(this.settings.alwaysOnTop, 'screen-saver', 1);
     if (process.env.FOCUSREELS_DEBUG) {
       console.log('[overlay] bounds', JSON.stringify(win.getBounds()),
         'visible', win.isVisible(), 'opacity', win.getOpacity());
@@ -190,6 +190,9 @@ export class OverlayWindow {
       });
     }
     if (settings.opacity !== previous.opacity) win.setOpacity(settings.opacity);
+    if (settings.alwaysOnTop !== previous.alwaysOnTop) {
+      win.setAlwaysOnTop(settings.alwaysOnTop, 'screen-saver', 1);
+    }
 
     // Only re-arm the mouse when the click-through *policy* changed. Saving the
     // volume also lands here, and resetting the grab mid-drag would yank the

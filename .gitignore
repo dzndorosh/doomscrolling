@@ -1,5 +1,6 @@
 node_modules/
 dist/
+release/
 .DS_Store
 adapters/ax/.build/
 media/*.mp4
@@ -13,6 +14,7 @@ media/*.webm
 artifacts/bluesky-probe/
 artifacts/editorial-feed/
 artifacts/youtube-catalog/
+artifacts/wheel-hardware/
 config/youtube-sources.candidates.json
 config/youtube-sources.test.json
 # Keep aggregate decisions visible when generated locally.

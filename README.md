@@ -41,6 +41,73 @@ npm install
 npm start
 ```
 
+Click the FocusReels menu-bar icon to open the Control Center. Its master
+`FocusReels enabled` switch is persisted in `settings.json`; when off, new AI
+turns are ignored and any visible feed is hidden.
+
+The Control Center also exposes `Always on top` and `Launch at login`. The
+latter uses macOS Login Items and is off by default until enabled by the user.
+FocusReels also appears in the Dock; the menu-bar item remains available as a
+secondary quick access point.
+
+The native vertical-scroll path is now enabled by default. To smoke-test the
+legacy path explicitly, run:
+
+```bash
+FOCUSREELS_LEGACY_SCROLL=1 npm start
+```
+
+Packaged production builds use the same native path. The legacy pane/gesture
+path remains available only through the explicit escape flag.
+
+The accepted development configuration (native scrolling with direct iframe
+hover and chromeless YouTube controls) can also be launched explicitly with:
+
+```bash
+npm run start:native
+```
+
+This is the same native configuration used by the current packaged build.
+
+Before changing the production scroll path, run the native seam check:
+
+```bash
+npm run check:native-rollout
+```
+
+The Control Center wiring can be checked without launching Electron:
+
+```bash
+npm run check:control-center
+```
+
+Before creating a macOS package, verify the built runtime bundle:
+
+```bash
+npm run check:package
+```
+
+Validate the macOS packaging configuration:
+
+```bash
+npm run check:packaging-config
+```
+
+Run the complete non-interactive release gate:
+
+```bash
+npm run check:release
+```
+
+Build a local unsigned DMG when a packaging run is desired:
+
+```bash
+npm run package:mac
+```
+
+The DMG is written to `release/` and is unsigned/notarized in local development;
+distribution signing is a separate release step.
+
 Run `npm test`, `npm run typecheck` and `npm run build` before publishing changes.
 Maintainers update the catalog with `YOUTUBE_API_KEY=... npm run catalog:youtube:collect`.
 The review and candidate commands are maintainer-only and are not part of the

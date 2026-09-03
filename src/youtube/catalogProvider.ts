@@ -21,7 +21,12 @@ export class CatalogProvider {
   }
   async next(){if(this.cursor<this.history.length-1){this.cursor++;return this.history[this.cursor]??null;}const v=this.items()[0]??null;if(v){this.seen.add(v.id);this.history.push(v);this.cursor=this.history.length-1;}return v;}
   previous(){if(this.cursor<=0)return null;this.cursor--;return this.history[this.cursor]??null;}
-  peek(){return this.items()[0]??null;}
+  peek(){
+    // When walking history, preload the actual next history entry rather than
+    // selecting a fresh unseen item and desynchronising the two panes.
+    if(this.cursor>=0 && this.cursor<this.history.length-1) return this.history[this.cursor+1]??null;
+    return this.items()[0]??null;
+  }
   refresh(){this.seen.clear();this.broken.clear();this.history=[];this.cursor=-1;return this.status;}
   markBroken(videoId:string, error:string){ this.broken.add(videoId); if (process.env.FOCUSREELS_DEBUG_FEED) console.log('[feed] unavailable', { videoId, error }); }
   get status():FeedStatus{return{demoMode:false,reason:this.catalog.videos.length?'':'Add test YouTube Shorts IDs to run the catalog demo.',queued:this.items().length,provider:this.catalog.videos.length?'youtube-catalog':'empty',catalogSource:this.catalog.videos.length?this.source:null,totalVideos:this.catalog.videos.length,playableVideos:this.items().length};}

@@ -6,10 +6,22 @@
   "main": "dist/app/main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json && node scripts/copy-assets.mjs && node scripts/check-no-key.mjs",
+    "check:packaging-config": "node scripts/check-packaging-config.mjs",
+    "check:release": "node scripts/check-release.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "start": "npm run build && electron .",
+    "start:native": "FOCUSREELS_NATIVE_SCROLL=1 FOCUSREELS_NATIVE_IFRAME_HOVER=1 FOCUSREELS_NATIVE_CHROMELESS=1 NODE_ENV=development npm start",
+    "prototype:native-scroll": "electron tools/native-scroll-prototype/main.cjs",
+    "check:prototype:native-scroll": "node tools/native-scroll-prototype/check.mjs",
+    "prototype:native-scroll:youtube": "electron tools/native-scroll-prototype/main-youtube.cjs",
+    "check:prototype:native-scroll:youtube": "node tools/native-scroll-prototype/check-youtube.mjs",
+    "check:native-rollout": "node scripts/check-native-rollout.mjs",
+    "check:control-center": "node scripts/check-control-center.mjs",
+    "check:package": "npm run build && node scripts/check-package.mjs",
+    "package:mac": "npm run build && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dmg",
+    "test:prototype:native-scroll:youtube": "node --test tools/native-scroll-prototype/lifecycle-model.test.mjs",
     "demo": "npm run build && node dist/cli/demo.js",
     "emit": "node dist/cli/emit.js",
     "ax:build": "swift build -c release --package-path adapters/ax",
@@ -27,11 +39,25 @@
     "catalog:youtube:review": "node --experimental-strip-types scripts/catalog-youtube-review.ts",
     "catalog:youtube:candidates": "node --experimental-strip-types scripts/catalog-youtube-candidates.ts",
     "catalog:youtube:test-collect": "node --experimental-strip-types scripts/catalog-youtube-test-collect.ts",
-    "e2e:youtube": "node --experimental-strip-types scripts/youtube-e2e-driver.ts"
+    "e2e:youtube": "node --experimental-strip-types scripts/youtube-e2e-driver.ts",
+    "e2e:youtube:wheel": "node --experimental-strip-types scripts/youtube-wheel-e2e.ts",
+    "diagnose:wheel:hardware": "node --experimental-strip-types scripts/diagnose-wheel-hardware.ts"
+  },
+  "build": {
+    "appId": "app.focusreels.desktop",
+    "productName": "FocusReels",
+    "asar": true,
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "!dist/mac-*", "!dist/*.dmg", "!dist/*.blockmap", "package.json", "public/**/*", "config/**/*"],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }]
+    }
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "electron": "^33.0.0",
+    "electron-builder": "^26.15.3",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"
   }

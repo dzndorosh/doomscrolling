@@ -8,7 +8,7 @@ const from = join(root, 'src', 'app', 'renderer');
 const to = join(root, 'dist', 'app', 'renderer');
 
 mkdirSync(to, { recursive: true });
-for (const file of ['player.html', 'player.js', 'youtube.html', 'youtube.js']) {
+for (const file of ['player.html', 'player.js', 'youtube.html', 'youtube.js', 'wheelGesture.js', 'nativeFeed.js', 'control-center.html', 'control-center.css', 'control-center.js']) {
   cpSync(join(from, file), join(to, file));
 }
 

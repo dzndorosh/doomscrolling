@@ -1,0 +1,83 @@
+:root {
+  color-scheme: dark;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #111;
+}
+
+.feed {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.feed::-webkit-scrollbar { display: none; }
+
+.slide {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  background: #111;
+}
+
+.player-host,
+.player-host iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.player-host {
+  position: absolute;
+  inset: 0;
+}
+
+/* Covers the picture, while the bottom control strip remains clickable. */
+.input-surface {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 76px;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.diagnostics {
+  position: fixed;
+  z-index: 3;
+  top: 10px;
+  left: 10px;
+  max-width: calc(100% - 20px);
+  box-sizing: border-box;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: #fff;
+  background: rgb(0 0 0 / 64%);
+  font-size: 9px;
+  line-height: 1.45;
+  pointer-events: none;
+}
+
+.diagnostics output { color: #9fe8ff; }
+
+#trace {
+  max-width: 280px;
+  max-height: 112px;
+  margin: 4px 0 0;
+  overflow: hidden;
+  color: #b9b9b9;
+  white-space: pre-wrap;
+  font: inherit;
+  font-size: 8px;
+}

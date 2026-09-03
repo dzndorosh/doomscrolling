@@ -41,9 +41,12 @@ describe('SettingsStore', () => {
   });
 
   it('rejects values of the wrong type and unknown enum members', () => {
-    write({ muted: 'yes', corner: 'middle', hideMode: 'whenever', width: 'big' });
+    write({ enabled: 'yes', muted: 'yes', alwaysOnTop: 'yes', launchAtLogin: 'yes', corner: 'middle', hideMode: 'whenever', width: 'big' });
     const s = new SettingsStore(file).get();
+    expect(s.enabled).toBe(DEFAULT_SETTINGS.enabled);
     expect(s.muted).toBe(DEFAULT_SETTINGS.muted);
+    expect(s.alwaysOnTop).toBe(DEFAULT_SETTINGS.alwaysOnTop);
+    expect(s.launchAtLogin).toBe(DEFAULT_SETTINGS.launchAtLogin);
     expect(s.corner).toBe(DEFAULT_SETTINGS.corner);
     expect(s.hideMode).toBe(DEFAULT_SETTINGS.hideMode);
     expect(s.width).toBe(DEFAULT_SETTINGS.width);
@@ -62,12 +65,26 @@ describe('SettingsStore', () => {
     const seen: number[] = [];
     store.onChange((s) => seen.push(s.volume));
 
-    store.update({ volume: 0.25, muted: false });
+    store.update({ volume: 0.25, muted: false, alwaysOnTop: false });
 
     expect(store.get().volume).toBe(0.25);
     expect(store.get().muted).toBe(false);
+    expect(store.get().alwaysOnTop).toBe(false);
     expect(seen).toEqual([0.25]);
     expect(JSON.parse(readFileSync(file, 'utf8')).volume).toBe(0.25);
+  });
+
+  it('restores the master switch and source switches after a new store is created', () => {
+    const store = new SettingsStore(file);
+    store.update({
+      enabled: false,
+      enabledSources: { ...store.get().enabledSources, cursor: false },
+    });
+
+    const restarted = new SettingsStore(file);
+    expect(restarted.get().enabled).toBe(false);
+    expect(restarted.get().enabledSources.cursor).toBe(false);
+    expect(restarted.get().enabledSources['vscode-copilot']).toBe(true);
   });
 
   it('re-reads a file edited by hand', () => {

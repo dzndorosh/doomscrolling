@@ -21,6 +21,7 @@ import { OverlayWindow, type OverlayStatus } from './overlayWindow.js';
 import { SettingsStore } from './settings.js';
 import { TrayController } from './tray.js';
 import { CatalogProvider } from '../youtube/catalogProvider.js';
+import { ControlCenterWindow } from './controlCenter.js';
 import { remoteCatalogUrl } from '../youtube/catalogConfig.js';
 
 // Development/E2E runs must never touch the user's normal Application Support.
@@ -30,9 +31,9 @@ if (process.env.NODE_ENV !== 'production' && process.env.FOCUSREELS_E2E_USER_DAT
   if (e2ePath.startsWith('/') && !e2ePath.includes('..')) app.setPath('userData', e2ePath);
 }
 
-// A menu-bar utility: no dock icon, and activating it never steals focus.
-app.dock?.hide();
-app.setActivationPolicy?.('accessory');
+// FocusReels has both a menu-bar indicator and a normal Dock presence so the
+// main Control Center is discoverable like a regular macOS application.
+app.setActivationPolicy?.('regular');
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
@@ -45,6 +46,9 @@ const youtube = new YoutubeWindow(settings.get(), (placement) => {
   settings.update({ placement });
 });
 const catalogProvider = new CatalogProvider();
+const controlCenter = new ControlCenterWindow(settings);
+app.on('second-instance', () => controlCenter.show());
+app.on('activate', () => controlCenter.show());
 let e2eServer: ReturnType<typeof createServer> | null = null;
 let e2eHoldOpen = false;
 
@@ -53,9 +57,18 @@ function activePlayer() {
   return settings.get().player === 'youtube' ? youtube : overlay;
 }
 
+function applyLoginItemSetting(enabled: boolean): void {
+  try {
+    app.setLoginItemSettings({ openAtLogin: enabled });
+  } catch (err) {
+    console.warn('[focusreels] could not update launch-at-login:', (err as Error).message);
+  }
+}
+
 const registryConfig = (): RegistryConfig => {
   const s = settings.get();
   return {
+    enabled: s.enabled,
     showDelayMs: s.showDelayMs,
     watchdogMs: s.watchdogMs,
     hideMode: s.hideMode,
@@ -127,6 +140,7 @@ const tray = new TrayController({
   onNextVideo: () => {},
   onRefreshFeed: () => youtube.command('refresh'),
   onQuit: () => app.quit(),
+  onOpenControlCenter: () => controlCenter.show(),
 });
 
 const broker = new EventBroker({
@@ -156,6 +170,7 @@ async function shutdown(): Promise<void> {
   registry.cancelAll('ide_closed');
   overlay.destroy();
   youtube.destroy();
+  controlCenter.destroy();
   ideWatcher.stop();
   tray.destroy();
   await broker.stop();
@@ -163,8 +178,11 @@ async function shutdown(): Promise<void> {
 }
 
 settings.onChange((s) => {
+  if (!s.enabled) registry.cancelAll('aborted');
   overlay.applySettings(s);
   youtube.applySettings(s);
+  applyLoginItemSetting(s.launchAtLogin);
+  controlCenter.update(s);
   // Switching modes mid-turn must not leave the other player on screen.
   (s.player === 'youtube' ? overlay : youtube).hide();
 });
@@ -183,6 +201,23 @@ ipcMain.handle('feed:previous', () => catalogProvider.previous());
 ipcMain.handle('feed:peek', () => catalogProvider.peek());
 ipcMain.handle('feed:refresh', () => catalogProvider.refresh());
 ipcMain.handle('feed:status', () => catalogProvider.status);
+ipcMain.handle('control-center:get-settings', () => settings.get());
+ipcMain.on('control-center:update', (_event, value: unknown) => {
+  if (!value || typeof value !== 'object') return;
+  const patch = value as Record<string, unknown>;
+  if (typeof patch.enabled === 'boolean') settings.update({ enabled: patch.enabled });
+  if (typeof patch.muted === 'boolean') settings.update({ muted: patch.muted });
+  if (typeof patch.alwaysOnTop === 'boolean') settings.update({ alwaysOnTop: patch.alwaysOnTop });
+  if (typeof patch.launchAtLogin === 'boolean') settings.update({ launchAtLogin: patch.launchAtLogin });
+  if (patch.enabledSources && typeof patch.enabledSources === 'object') {
+    const sourcePatch = patch.enabledSources as Record<string, unknown>;
+    const enabledSources = { ...settings.get().enabledSources };
+    for (const source of Object.keys(enabledSources) as SourceId[]) {
+      if (typeof sourcePatch[source] === 'boolean') enabledSources[source] = sourcePatch[source] as boolean;
+    }
+    settings.update({ enabledSources });
+  }
+});
 ipcMain.on('feed:feedback', (_event, value: unknown) => { if (value && typeof value === 'object') catalogProvider.setFeedback(value as any); });
 ipcMain.on('feed:playback-error', (_event, value: unknown) => { if (value && typeof value === 'object' && typeof (value as any).videoId === 'string') catalogProvider.markBroken((value as any).videoId, String((value as any).error ?? 'unknown')); });
 
@@ -251,7 +286,7 @@ ipcMain.on('focusreels:audio', (_event, payload: unknown) => {
 });
 
 app.whenReady().then(async () => {
-  if (process.env.NODE_ENV === 'production' || !process.env.FOCUSREELS_E2E) {
+  if (process.env.NODE_ENV === 'production' || !process.env.FOCUSREELS_E2E || process.env.FOCUSREELS_E2E_REMOTE) {
     void catalogProvider.refreshRemote(remoteCatalogUrl(process.env.FOCUSREELS_REMOTE_CATALOG_URL));
   }
   if (process.env.NODE_ENV !== 'production' && process.env.FOCUSREELS_E2E) {
@@ -267,6 +302,12 @@ app.whenReady().then(async () => {
           try {
             const command = JSON.parse(line) as { action?: string };
             if (command.action === 'next') { youtube.command('next'); socket.end(); }
+            else if (command.action === 'wheel' && process.env.NODE_ENV !== 'production') { youtube.sendWheel(Number((command as any).deltaY ?? 0), Number((command as any).deltaX ?? 0)); socket.end(); }
+            else if (command.action === 'wheel-capture-marker' && process.env.NODE_ENV !== 'production' && process.env.FOCUSREELS_WHEEL_HARDWARE_CAPTURE) {
+              const marker = String((command as any).marker ?? '').replace(/[^a-z0-9-]/gi, '').slice(0, 48);
+              if (marker) youtube.command(`wheel-capture-marker:${marker}`);
+              socket.end();
+            }
             else if (command.action === 'previous') { youtube.command('previous'); socket.end(); }
             else if (command.action === 'show') { youtube.show({ source: 'demo', startedAt: Date.now(), parallel: 1 }); socket.end(); }
             else if (command.action === 'hide') { e2eHoldOpen = false; youtube.hide(); socket.end(); }
@@ -298,6 +339,7 @@ app.whenReady().then(async () => {
   });
   mkdirSync(mediaDir(), { recursive: true });
   settings.save(); // materialise the file on first run so it is editable
+  applyLoginItemSetting(settings.get().launchAtLogin);
 
   try {
     await broker.start();
@@ -310,6 +352,9 @@ app.whenReady().then(async () => {
 
   tray.start();
   ideWatcher.start();
+  // Control Center is the primary app surface; the menu bar remains a
+  // secondary indicator and quick toggle. Closing this window does not quit.
+  controlCenter.show();
 
   // A monitor coming or going can strand the window at coordinates that no
   // longer exist, so re-resolve the placement whenever the layout changes.

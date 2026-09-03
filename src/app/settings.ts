@@ -21,6 +21,8 @@ export type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 export type PlayerMode = 'youtube' | 'local';
 
 export interface Settings {
+  /** master switch: when off, no new AI turn can open the feed */
+  enabled: boolean;
   /** per-IDE switch — an off source never opens a turn */
   enabledSources: Record<SourceId, boolean>;
   /** how long the wait must last before anything appears */
@@ -29,6 +31,10 @@ export interface Settings {
   watchdogMs: number;
   hideMode: HideMode;
   muted: boolean;
+  /** keep the player above other windows */
+  alwaysOnTop: boolean;
+  /** ask macOS to start FocusReels when the user logs in */
+  launchAtLogin: boolean;
   /** 0…1, remembered across turns so the user sets it once */
   volume: number;
   corner: Corner;
@@ -64,6 +70,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  enabled: true,
   enabledSources: {
     cursor: true,
     'vscode-copilot': true,
@@ -75,6 +82,8 @@ export const DEFAULT_SETTINGS: Settings = {
   watchdogMs: 10 * 60 * 1000,
   hideMode: 'full-completion',
   muted: true,
+  alwaysOnTop: true,
+  launchAtLogin: false,
   volume: 0.6,
   corner: 'bottom-right',
   width: 260,
@@ -138,11 +147,14 @@ function coerce(raw: unknown): Settings {
       : DEFAULT_SETTINGS.hideMode;
 
   return {
+    enabled: bool('enabled'),
     enabledSources: enabled,
     showDelayMs: num('showDelayMs', 0, 10_000),
     watchdogMs: num('watchdogMs', 5_000, 60 * 60_000),
     hideMode,
     muted: bool('muted'),
+    alwaysOnTop: bool('alwaysOnTop'),
+    launchAtLogin: bool('launchAtLogin'),
     volume: num('volume', 0, 1),
     corner,
     width: num('width', 160, 640),

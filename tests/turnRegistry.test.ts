@@ -99,6 +99,15 @@ describe('TurnRegistry', () => {
     expect(r.visible).toBe(false);
   });
 
+  it('ignores all sources when the master switch is off', () => {
+    config = { ...config, enabled: false };
+    const r = build();
+    r.dispatch(ev('cursor', 't1', 'turn_started'));
+    timers.advance(5000);
+    expect(r.size).toBe(0);
+    expect(r.visible).toBe(false);
+  });
+
   it('drops an end or progress event for a turn it never opened', () => {
     const r = build();
     r.dispatch(ev('cursor', 'ghost', 'turn_ended', 'completed'));

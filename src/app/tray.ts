@@ -30,6 +30,7 @@ export interface TrayDeps {
   onNextVideo: () => void;
   onRefreshFeed: () => void;
   onQuit: () => void;
+  onOpenControlCenter: () => void;
 }
 
 export class TrayController {
@@ -40,6 +41,7 @@ export class TrayController {
   start(): void {
     this.tray = new Tray(this.icon());
     this.tray.setToolTip('FocusReels');
+    this.tray.on('click', () => this.deps.onOpenControlCenter());
     this.render();
     this.deps.settings.onChange(() => this.render());
   }
@@ -82,6 +84,14 @@ export class TrayController {
       : `Feed: ${feed.queued} queued`;
 
     const menu = Menu.buildFromTemplate([
+      { label: 'Open FocusReels…', click: () => this.deps.onOpenControlCenter() },
+      {
+        label: 'FocusReels enabled',
+        type: 'checkbox',
+        checked: s.enabled,
+        click: () => this.set({ enabled: !s.enabled }),
+      },
+      { type: 'separator' },
       { label: active > 0 ? `${active} turn(s) in flight` : 'Idle', enabled: false },
       { label: feedLine, enabled: false },
       { type: 'separator' },

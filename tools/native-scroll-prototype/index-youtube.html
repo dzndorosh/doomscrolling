@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Native Scroll Snap — YouTube Phase B</title>
+    <link rel="stylesheet" href="styles-youtube.css" />
+  </head>
+  <body>
+    <main class="feed" aria-label="Native scroll snap YouTube test feed">
+      <section class="slide" data-index="0" data-video-id="2MYden2yjVU">
+        <div class="player-host" id="player-host-0"></div>
+        <div class="input-surface" aria-hidden="true"></div>
+      </section>
+      <section class="slide" data-index="1" data-video-id="LJop4DC_aKI">
+        <div class="player-host" id="player-host-1"></div>
+        <div class="input-surface" aria-hidden="true"></div>
+      </section>
+      <section class="slide" data-index="2" data-video-id="WgCZDoJIckw">
+        <div class="player-host" id="player-host-2"></div>
+        <div class="input-surface" aria-hidden="true"></div>
+      </section>
+      <section class="slide" data-index="3" data-video-id="KqCQUTDkRcs">
+        <div class="player-host" id="player-host-3"></div>
+        <div class="input-surface" aria-hidden="true"></div>
+      </section>
+      <section class="slide" data-index="4" data-video-id="PL9zZRWRMI4">
+        <div class="player-host" id="player-host-4"></div>
+        <div class="input-surface" aria-hidden="true"></div>
+      </section>
+    </main>
+
+    <aside class="diagnostics" aria-live="polite">
+      <div>active index <output id="active-index">0</output></div>
+      <div>settled video ID <output id="settled-video-id">2MYden2yjVU</output></div>
+      <div>nearest visible index <output id="nearest-index">0</output></div>
+      <div>playing video ID <output id="playing-video-id">—</output></div>
+      <div>mounted/ready players <output id="ready-count">0/5</output></div>
+      <div>last movement <output id="last-movement">—</output></div>
+      <pre id="trace" aria-label="Native scroll trace"></pre>
+    </aside>
+
+    <script type="module" src="app-youtube.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+  </body>
+</html>

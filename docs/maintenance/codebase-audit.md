@@ -16,7 +16,7 @@ movement and morphing remain in `YoutubeWindow` and are independent of catalog s
 
 | Area | Current role / callers | Decision |
 | --- | --- | --- |
-| `src/app/{main,youtubeWindow,youtubePreload,renderer}` | Electron runtime, IPC, one local IFrame player; loaded by `src/app/main.ts` | **KEEP**. UI and motion are out of scope. |
+| `src/app/{main,youtubeWindow,youtubePreload,renderer}` | Electron runtime, IPC, native scroll-snap feed with stable local IFrame players; loaded by `src/app/main.ts` | **KEEP**. Native paging is the default; legacy gesture code remains an explicit fallback. |
 | `src/youtube/catalog.ts`, `catalogProvider.ts`, `feedback.ts`, `reviewDataset.ts` | Runtime catalog, validation, ranking, persistence; imported by app/tests | **KEEP**. This is the single runtime source of truth. |
 | `scripts/catalog-youtube-collect.ts`, `catalog-youtube-candidates.ts`, `catalog-youtube-seed.ts`, `catalog-youtube-test-collect.ts`, `catalog-youtube-review.ts`, `youtube-e2e-driver.ts` | Maintainer bootstrap/collection/review and development E2E; invoked by package scripts | **KEEP**. These are intentionally outside the Electron build. |
 | `scripts/catalog-youtube-sync.ts` | Older playlist-ID collector; no production import or workflow reference | **DELETE** after removing its npm script. `catalog-youtube-collect.ts` is the only collector path. |
@@ -55,7 +55,14 @@ Runtime callers use `YoutubeCatalogProvider` and do not know cache/filesystem de
 Maintainer commands use the catalog collector and its validation contract. The remaining
 legacy FeedService is explicitly test-only; no second production playback path is enabled.
 
-TODO: `Catalog scroll/swipe gesture requires a separate UI iteration.`
+Native paging rollout (2026-09-03): CSS scroll-snap is the default production path;
+the old `WheelGestureRecognizer` remains available only with
+`FOCUSREELS_LEGACY_SCROLL=1`. YouTube players stay in stable slide hosts, and the
+active player lifecycle resets outgoing/incoming playback positions and keeps
+audio exclusive to the settled slide.
+
+TODO: add adapters before exposing arbitrary third-party applications in Control
+Center; a stored app name without an event source would not trigger playback.
 
 Post-cleanup YouTube E2E smoke (2026-09-02): environment catalog loaded 8 IDs; all 8
 were selected, 7 reached `player-playing` in the sequential driver run and the first
