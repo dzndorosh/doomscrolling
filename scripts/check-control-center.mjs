@@ -7,6 +7,7 @@ const html = read('src/app/renderer/control-center.html');
 const renderer = read('src/app/renderer/control-center.js');
 const main = read('src/app/main.ts');
 const settings = read('src/app/settings.ts');
+const controlCenter = read('src/app/controlCenter.ts');
 const checks = [
   ['master enabled toggle', html.includes('id="enabled"') && renderer.includes('update({ enabled:')],
   ['sound toggle', html.includes('id="muted"') && renderer.includes('update({ muted:')],
@@ -16,6 +17,7 @@ const checks = [
   ['settings fields are typed', settings.includes('alwaysOnTop: boolean') && settings.includes('launchAtLogin: boolean')],
   ['main accepts control-center updates', main.includes("patch.alwaysOnTop") && main.includes("patch.launchAtLogin")],
   ['login item integration', main.includes('setLoginItemSettings')],
+  ['Control Center stays above video stage', controlCenter.includes("win.setAlwaysOnTop(true, 'screen-saver', 1)")],
 ];
 for (const [name, ok] of checks) console.log(`${ok ? 'PASS' : 'FAIL'} ${name}`);
 if (checks.some(([, ok]) => !ok)) process.exitCode = 1;

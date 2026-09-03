@@ -17,6 +17,7 @@
 - Dock reopen fixed with macOS `activate` handler; closing Control Center and clicking the Dock icon now recreates/focuses it.
 - Dock reopen fix rebuilt into the unsigned arm64 DMG after `npm test`, `npm run typecheck`, `npm run build`, and `npm run check:release` passed.
 - Local packaging output `release/` is ignored by Git; final `npm run check:release` still passes.
+- Control Center now uses the same macOS screen-saver window level while open, so it remains accessible above an active always-on-top video; Control Center check, typecheck, build, and tests pass.
 
 ## Допущения
 

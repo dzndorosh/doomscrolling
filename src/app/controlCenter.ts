@@ -28,6 +28,10 @@ export class ControlCenterWindow {
         sandbox: false,
       },
     });
+    // The video stage uses the screen-saver level when Always on top is
+    // enabled. Keep settings reachable while it is visible; this applies only
+    // to the Control Center window and does not change the user's video toggle.
+    win.setAlwaysOnTop(true, 'screen-saver', 1);
     win.on('closed', () => { this.win = null; this.ready = false; });
     win.webContents.on('did-finish-load', () => {
       this.ready = true;
