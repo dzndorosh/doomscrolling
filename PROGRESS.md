@@ -19,6 +19,8 @@
 - Local packaging output `release/` is ignored by Git; final `npm run check:release` still passes.
 - Control Center now uses the same macOS screen-saver window level while open, so it remains accessible above an active always-on-top video; Control Center check, typecheck, build, and tests pass.
 - Backlog started with an audio-coexistence probe; documented why frontmost-app heuristics are insufficient and why Core Audio research must precede production behavior changes.
+- Added a standalone macOS Core Audio output-activity probe (`npm run diagnose:audio`); it is intentionally not wired into playback yet.
+- Probe compiled and ran successfully on macOS 26.6.2, reporting the default output device and `runningSomewhere` state.
 
 ## Допущения
 
@@ -31,6 +33,8 @@
 - `npm audit --omit=dev` is clean; full audit reports dev-tool transitive vulnerabilities from electron-builder and was not auto-fixed because `--force` could introduce breaking changes.
 
 ## Заблокировано
+
+- Production audio coexistence is blocked pending manual correlation of the Core Audio signal with Music/Spotify/browser/call playback; the probe currently cannot identify the responsible application and is therefore not used to mute or suppress FocusReels.
 
 - Unsigned DMG clean install and launch-at-login still require manual macOS verification.
 - Manual source verification across Cursor/VS Code/JetBrains remains outstanding.

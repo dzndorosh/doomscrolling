@@ -6,14 +6,15 @@ Goal: do not unexpectedly enable FocusReels audio while the user is listening
 to music, is on a call, or is watching another video.
 
 Current state: FocusReels guarantees exclusive audio between its own players,
-but Electron does not expose a reliable cross-application audio-activity API.
-Checking the frontmost app is insufficient because music and calls may play in
-the background.
+but Electron does not expose a cross-application audio-activity API. A
+standalone Core Audio probe now reports whether the default output device is
+already running immediately before a trigger. Checking the frontmost app is
+insufficient because music and calls may play in the background.
 
-Decision: do not ship a guessed heuristic. The next probe is a small macOS
-native helper research spike around Core Audio process activity and required
-permissions. It must remain opt-in and must not change scrolling or playback
-until its signal is reliable.
+Decision: keep the probe standalone until repeated manual runs establish its
+false-positive/false-negative behavior. It must not change scrolling or
+playback until its signal is reliable; the probe itself requires no API key or
+screen-recording permission.
 
 ## 2. Application adapters
 

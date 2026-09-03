@@ -41,7 +41,8 @@
     "catalog:youtube:test-collect": "node --experimental-strip-types scripts/catalog-youtube-test-collect.ts",
     "e2e:youtube": "node --experimental-strip-types scripts/youtube-e2e-driver.ts",
     "e2e:youtube:wheel": "node --experimental-strip-types scripts/youtube-wheel-e2e.ts",
-    "diagnose:wheel:hardware": "node --experimental-strip-types scripts/diagnose-wheel-hardware.ts"
+    "diagnose:wheel:hardware": "node --experimental-strip-types scripts/diagnose-wheel-hardware.ts",
+    "diagnose:audio": "swiftc scripts/audio-activity.swift -framework CoreAudio -o /tmp/focusreels-audio-activity && /tmp/focusreels-audio-activity"
   },
   "build": {
     "appId": "app.focusreels.desktop",
