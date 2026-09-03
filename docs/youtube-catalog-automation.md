@@ -17,7 +17,16 @@ The public user needs no key or setup. YouTube branding and player notices remai
 Maintainers may keep candidate handles in `config/youtube-channel-handles.json`. Resolve
 and inspect them with `YOUTUBE_API_KEY=... npm run catalog:youtube:resolve-handles`; this
 writes only `artifacts/youtube-catalog/resolved-channels.json` and
-`permanent-candidates*.json`. Review the `Permanent candidates` mode in the local gallery,
-export `permanent-channel-review.json`, then run
-`YOUTUBE_API_KEY=... npm run catalog:youtube:apply-review`. The command is fail-closed,
+`permanent-candidates*.json`. Then decide, either way:
+
+- **Manual** — review the `Permanent candidates` mode in the local gallery and export
+  `permanent-channel-review.json`.
+- **Automatic** — `npm run catalog:youtube:auto-approve` writes the same review file with
+  no key and no browser: a channel is approved when at least `MIN_ELIGIBLE` (default 3) of
+  its fifty most recent uploads pass the eligibility check. It carries the current allowlist
+  through as approved, because `apply` replaces `sources` wholesale and would otherwise
+  drop every channel absent from the review file. It fails closed when nothing reaches the
+  threshold.
+
+Then run `YOUTUBE_API_KEY=... npm run catalog:youtube:apply-review`. The command is fail-closed,
 backs up the prior allowlist in local artifacts, and never writes a production catalog.

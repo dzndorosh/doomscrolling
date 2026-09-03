@@ -28,6 +28,23 @@ describe('permanent catalog CLI', () => {
     writeFileSync(join(cwd, 'artifacts/youtube-catalog/permanent-channel-review.json'), '{"channels":[]}');
     expect(() => run('apply', cwd)).toThrow(); expect(readFileSync(path, 'utf8')).toBe(before);
   });
+  it('auto-approve keeps the existing allowlist and adds channels over the threshold', () => {
+    const cwd = project();
+    writeFileSync(join(cwd, 'artifacts/youtube-catalog/permanent-candidates.json'), JSON.stringify({ channels: [
+      { channelId: 'UCaaaaaaaaaaaaaaaaaaaaaa', channelTitle: 'Rich', handle: '@rich', category: 'technology', weight: 1, eligible: [1, 2, 3], rejected: [1] },
+      { channelId: 'UCbbbbbbbbbbbbbbbbbbbbbb', channelTitle: 'Thin', handle: '@thin', category: 'humor', weight: 1, eligible: [1], rejected: [1, 2] },
+    ] }));
+    run('auto-approve', cwd);
+    const review = JSON.parse(readFileSync(join(cwd, 'artifacts/youtube-catalog/permanent-channel-review.json'), 'utf8'));
+    const approved = review.channels.filter((c: any) => c.decision === 'approve-channel').map((c: any) => c.channelId);
+    expect(approved).toContain('UCold');
+    expect(approved).toContain('UCaaaaaaaaaaaaaaaaaaaaaa');
+    expect(approved).not.toContain('UCbbbbbbbbbbbbbbbbbbbbbb');
+    run('apply', cwd);
+    const sources = JSON.parse(readFileSync(join(cwd, 'config/youtube-sources.json'), 'utf8')).sources.map((s: any) => s.channelId);
+    expect(sources).toEqual(['UCold', 'UCaaaaaaaaaaaaaaaaaaaaaa']);
+  });
+  it('auto-approve without candidates fails closed', () => expect(() => run('auto-approve', project())).toThrow());
   it.each(['resolve', 'collect'])('%s requires an API key', (mode) => expect(() => run(mode, project())).toThrow());
   it('rejects unknown modes', () => expect(() => run('wat', project())).toThrow());
 });
