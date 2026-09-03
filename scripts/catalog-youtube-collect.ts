@@ -60,7 +60,7 @@ async function main(): Promise<void> {
   if (previous?.videos?.length && candidates.length < previous.videos.length * 0.5) throw new Error(`Refusing >50% catalog drop (${previous.videos.length} -> ${candidates.length})`);
   const unique = [...new Map(candidates.map(v => [v.videoId, v])).values()];
   const channelCap = Math.max(1, Math.ceil(config.catalogLimit * 0.4)); const counts = new Map<string, number>();
-  const videos = unique.filter(v => { const count = counts.get(v.channelId) || 0; if (count >= channelCap) return false; counts.set(v.channelId, count + 1); return true; }).sort((a, b) => a.addedAt.localeCompare(b.addedAt) || a.videoId.localeCompare(b.videoId)).slice(0, config.catalogLimit).map(({ channelId: _channelId, ...item }) => item);
+  const videos = unique.filter(v => { const count = counts.get(v.channelId) || 0; if (count >= channelCap) return false; counts.set(v.channelId, count + 1); return true; }).sort((a, b) => b.addedAt.localeCompare(a.addedAt) || a.videoId.localeCompare(b.videoId)).slice(0, config.catalogLimit).map(({ channelId: _channelId, ...item }) => item);
   if (!videos.length) throw new Error('Refusing to publish empty catalog after limits');
   const catalog = { schemaVersion: 1 as const, generatedAt: new Date().toISOString(), videos };
   mkdirSync(join(root, 'public/catalog'), { recursive: true }); mkdirSync(join(root, 'artifacts/youtube-catalog'), { recursive: true });
