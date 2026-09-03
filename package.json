@@ -22,6 +22,7 @@
     "catalog:youtube:collect": "node --experimental-strip-types scripts/catalog-youtube-collect.ts",
     "catalog:youtube:resolve-handles": "node --experimental-strip-types scripts/catalog-youtube-permanent.ts resolve && node --experimental-strip-types scripts/catalog-youtube-permanent.ts collect",
     "catalog:youtube:permanent-candidates": "node --experimental-strip-types scripts/catalog-youtube-permanent.ts collect",
+    "catalog:youtube:auto-approve": "node --experimental-strip-types scripts/catalog-youtube-permanent.ts auto-approve",
     "catalog:youtube:apply-review": "node --experimental-strip-types scripts/catalog-youtube-permanent.ts apply",
     "catalog:youtube:seed": "node --experimental-strip-types scripts/catalog-youtube-seed.ts",
     "catalog:youtube:review": "node --experimental-strip-types scripts/catalog-youtube-review.ts",
