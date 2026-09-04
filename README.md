@@ -1,5 +1,14 @@
 # FocusReels
 
+> **Moved:** the active project now lives at
+> [dzndorosh/focusreels](https://github.com/dzndorosh/focusreels). Use that
+> repository for source code, releases, issues, and documentation. This
+> repository remains as a compatibility signpost; the complete pre-migration
+> Git history is preserved privately in `dzndorosh/doomscrolling-archive`.
+
+The material below is historical only and must not be treated as the current
+implementation guide.
+
 FocusReels is a macOS Electron overlay that shows a small stream of vertical
 videos while an AI task is running in an IDE. It appears and disappears with
 the existing IDE event adapters, never receives prompt or source-code content,
